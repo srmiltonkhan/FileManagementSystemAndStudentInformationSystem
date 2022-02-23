@@ -1,0 +1,183 @@
+CREATE DATABASE uni_mgt_sys;
+DROP TABLE IF EXISTS user_details;
+CREATE TABLE IF NOT EXISTS user_details
+(
+    user_id INTEGER(11) NOT NULL AUTO_INCREMENT,
+    user_id_num integer(11) NOT null,
+    user_name VARCHAR(50) NOT NULL,
+    user_email VARCHAR(50) NOT NULL UNIQUE ,
+    user_mobile VARCHAR(15) NOT NULL UNIQUE,
+    user_department VARCHAR(50) NOT NULL,
+    user_designation VARCHAR(50)NOT NULL,
+    user_password VARCHAR(200)NOT NULL,
+    user_type VARCHAR(15) NOT NULL,
+    user_status enum('active','inactive') NOT NULL,
+    user_reg_date DATE,
+    user_image VARCHAR(50) NOT NULL,
+    PRIMARY KEY(user_id),
+    CONSTRAINT unique_key UNIQUE(user_id_num,user_email,user_mobile)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS faculty;
+CREATE TABLE IF NOT EXISTS faculty(
+    faculty_id INTEGER(11) NOT NULL AUTO_INCREMENT,
+    user_id INTEGER(11) NOT NULL,
+    faculty_name VARCHAR(40) NOT NULL,
+    faculty_status enum('active','inactive'),
+    PRIMARY KEY(faculty_id),
+    CONSTRAINT unique_key UNIQUE(faculty_id,faculty_name),
+    CONSTRAINT fac_user_fk FOREIGN KEY(user_id) REFERENCES user_details(user_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT   
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS department;
+CREATE TABLE IF NOT EXISTS department(
+    department_id INTEGER(11) AUTO_INCREMENT,
+    user_id INTEGER(11) NOT NULL,
+    faculty_id INTEGER(11) NOT NULL,
+    dep_name VARCHAR(50) NOT NULL,
+    dep_status enum('active','inactive'),
+    PRIMARY KEY(department_id),
+    CONSTRAINT unique_key UNIQUE(department_id,dep_name),
+    CONSTRAINT dept_user_fk FOREIGN KEY(user_id) REFERENCES user_details(user_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT   
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS program;
+CREATE TABLE IF NOT EXISTS program(
+    program_id INTEGER(11) NOT NULL AUTO_INCREMENT,
+    user_id INTEGER(11) NOT NULL,
+    faculty_id INTEGER(11) NOT NULL,
+    department_id INTEGER (11) NOT NULL,
+    program_name VARCHAR(60) NOT NULL,
+    program_status enum('active','inactive'),
+    PRIMARY KEY(program_id),
+    CONSTRAINT unique_key UNIQUE(program_id,program_name),
+    CONSTRAINT prog_user_fk FOREIGN KEY(user_id) REFERENCES user_details(user_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT,   
+    CONSTRAINT prog_faculty_fk FOREIGN KEY(faculty_id) REFERENCES faculty(faculty_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT, 
+    CONSTRAINT prog_dept_fk FOREIGN KEY(department_id) REFERENCES department(department_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS stud_bsc_info;
+CREATE TABLE IF NOT EXISTS stud_bsc_info(
+    stud_id INTEGER NOT NULL AUTO_INCREMENT,
+    user_id integer(11) Not  null,
+    stud_id_num VARCHAR(14) NOT NULL,
+    stud_name varchar (60) not null,
+    email varchar (100),
+    mobile varchar(15) not null,
+    faculty_id integer(2) Not  null,
+    department_id integer(3) not null,
+    program_id integer(4) not null,
+    batch varchar(10) not null,
+    gender varchar(6) not null,
+    bld_grp varchar(5),
+    dob varchar(30),
+    reg_time varchar(15) not null,
+    reg_date date,
+    profile_image varchar(15),
+    PRIMARY KEY(stud_id),
+    CONSTRAINT unique_key UNIQUE(stud_id,mobile,email,profile_image),
+    CONSTRAINT stud_user_fk FOREIGN KEY(user_id) REFERENCES user_details(user_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT stud_faculty_fk FOREIGN KEY(faculty_id) REFERENCES faculty(faculty_id) ON UPDATE CASCADE ON DELETE RESTRICT ,
+    CONSTRAINT stud_dept_fk FOREIGN KEY(department_id) REFERENCES department(department_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT stud_program_fk FOREIGN KEY(program_id) REFERENCES program(program_id) ON UPDATE CASCADE ON DELETE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS stud_ape_info;
+CREATE TABLE IF NOT EXISTS stud_ape_info(
+    stud_ape_id INTEGER NOT NULL AUTO_INCREMENT,
+    stud_id INTEGER(11) Not  null,
+    user_id INTEGER(11) Not  null,
+    ad_form_num INTEGER(10) NOT NULL,
+    waiver_perctg varchar(5),
+    ad_semester varchar(10) NOT NULL,
+    ad_semester_y varchar(4) NOT NULL,
+    stud_status varchar(15) NOT NULL,
+    sibling_id varchar(14),
+    nid VARCHAR(15),
+    brth_regst_num varchar(15),
+    marital_sts VARCHAR(10) NOT NULL,
+    prst_addr VARCHAR(100) NOT NULL,
+    per_addr VARCHAR(100) NOT NULL,
+    citizenship VARCHAR(15) NOT NULL,
+    father_nm VARCHAR(50) NOT NULL,
+    father_occpt VARCHAR(30) NOT NULL,
+    mother_nm VARCHAR(50) NOT NULL,
+    mother_occpt VARCHAR(30) NOT NULL,
+    gardn_mobile CHAR(11) NOT NULL,
+    ssc_exm_deg_tle VARCHAR(20),
+    ssc_con_mjr_grp VARCHAR(30),
+    ssc_board VARCHAR(10),
+    ssc_institue VARCHAR(60),
+    ssc_roll VARCHAR(10),
+    ssc_registration VARCHAR(10),
+    ssc_y_passing INTEGER(4),
+    ssc_result VARCHAR(5),
+    hsc_exm_deg_tle VARCHAR(20),
+    hsc_con_mjr_grp VARCHAR(30),
+    hsc_board VARCHAR(10),
+    hsc_institue VARCHAR(60),
+    hsc_roll INTEGER(10),
+    hsc_registration  INTEGER(10),
+    hsc_y_passing INTEGER(4),
+    hsc_result VARCHAR(5),
+    PRIMARY KEY(stud_ape_id),
+    CONSTRAINT unique_key UNIQUE(stud_ape_id,stud_id,ad_form_num),
+    CONSTRAINT stud_ape_user_fk FOREIGN KEY(user_id) REFERENCES user_details(user_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT stud_ape_fk FOREIGN KEY(stud_id) REFERENCES stud_bsc_info(stud_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT   
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE file_cat(
+    file_cat_id int(11) AUTO_INCREMENT,
+    category_name VARCHAR(100),
+    PRIMARY KEY (file_cat_id),
+    CONSTRAINT unique_key UNIQUE(category_name)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE file_sub_cat(
+    file_sub_cat_id int(11) AUTO_INCREMENT,
+    file_cat_id int(11) NOT NULL,
+    file_sub_cat_name varchar(70) NOT NULL,
+    PRIMARY KEY (file_sub_cat_id),
+    CONSTRAINT unique_key UNIQUE(file_sub_cat_id),
+    CONSTRAINT sub_cat_fk FOREIGN KEY(file_cat_id) REFERENCES file_cat(file_cat_id) ON UPDATE CASCADE ON DELETE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE file_sup_cat(
+    file_sup_cat_id int(11) AUTO_INCREMENT,
+    file_cat_id int(11) NOT NULL,
+    file_sub_cat_id int(11) NOT NULL,
+    file_sup_cat_name varchar(100) NOT NULL,
+    PRIMARY KEY (file_sup_cat_id),
+    CONSTRAINT unique_key UNIQUE(file_sup_cat_id),
+    CONSTRAINT sup_cat_fk FOREIGN KEY(file_cat_id) REFERENCES file_cat(file_cat_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT sup_sub_fk FOREIGN KEY(file_sub_cat_id) REFERENCES file_sub_cat(file_sub_cat_id) ON UPDATE CASCADE ON DELETE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARSET=latin1
+
+DROP TABLE IF EXISTS file_mgt;
+CREATE TABLE IF NOT EXISTS file_mgt(
+    file_id INTEGER(11)AUTO_INCREMENT,
+    user_id INTEGER(11) NOT NULL,
+    file_id_num VARCHAR(30) NOT NULL,
+    file_cat_id INTEGER(11) NOT NULL,
+    file_sub_cat_id INTEGER(11) NOT NULL,
+    file_sup_cat_id INTEGER(11) NOT NULL,
+    file_name VARCHAR(100) NOT NULL,
+    upld_file VARCHAR(100) NOT NULL,
+    create_date VARCHAR(30) NOT NULL,
+    PRIMARY KEY(file_id),
+    CONSTRAINT unique_key UNIQUE(file_id_num,upld_file),
+    CONSTRAINT file_user_fk FOREIGN KEY(user_id) REFERENCES user_details(user_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT,
+    CONSTRAINT file_cat_mgt_fk FOREIGN KEY(file_cat_id) REFERENCES file_cat(file_cat_id) ON UPDATE 
+	CASCADE ON DELETE RESTRICT,
+    CONSTRAINT file_sub_fk FOREIGN KEY(file_sub_cat_id) REFERENCES file_sub_cat(file_sub_cat_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT file_sup_fk FOREIGN KEY(file_sup_cat_id) REFERENCES file_sup_cat(file_sup_cat_id) ON UPDATE
+	CASCADE ON DELETE RESTRICT
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+

@@ -1,0 +1,43 @@
+ /*GENERAL STYLES*/
+body{
+	position: relative;
+}
+.dashboardPage {
+    background-color: #f2f2f2;
+    overflow-x: hidden;
+}
+.panel_container {
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.page-margin{
+	margin-top: 46px;
+}
+nav ul li a.actives {
+background: #042738;
+color: #fff;
+border-left: 4px solid #138ec1;
+}
+.custom-bg-secondary{
+	background-color: #b5bcc3 !important;
+}
+.margin{
+    margin-top: -9px;
+}
+@media (max-width: 1399px) {
+    .navbar-header{
+        padding-left: 2px;
+    }
+}
+@media (min-width: 1399px) {
+    .navbar-header{
+        padding-left: 2px;
+    }
+}
+.stud_hd_clr{
+    background-color: #031a25;
+    color: white;
+}
